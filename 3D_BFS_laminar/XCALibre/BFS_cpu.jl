@@ -109,7 +109,7 @@ initialise!(model.momentum.p, 0.0)
 exe_time = @elapsed residuals = run!(model, config)
 
 # Write execution time to file 
-
-open(ARGS[1]*".txt","a") do io
+filename = "multithread_"*ARGS[1]*".txt"
+open(filename,"a") do io
     println(io,"$nthreads,$workgroup,$exe_time")
 end

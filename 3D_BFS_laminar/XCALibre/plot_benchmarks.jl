@@ -1,13 +1,16 @@
 using Plots
 using DelimitedFiles
 
+# Test/create output figure directory
+isdir("figures") || mkdir("figures")
+
 # Load benchmark results
 of_similar = readdlm("openfoam_PCG_PBiCGStab_diag.txt", ',')
 of_GAMG = readdlm("openfoam_GAMG_PBiCGStab_DILU.txt", ',')
-xcal_033 = readdlm("0.3.3.txt", ',')
-xcal_032 = readdlm("0.3.2.txt", ',')
-xcal_033_gpu = readdlm("nvidia_benchmarks_0.3.3.txt", ',')
-xcal_032_gpu = readdlm("nvidia_benchmarks_0.3.2.txt", ',')
+xcal_033 = readdlm("multithread_0.3.3.txt", ',')
+xcal_032 = readdlm("multithread_0.3.2.txt", ',')
+xcal_033_gpu = readdlm("nvidia_0.3.3.txt", ',')
+xcal_032_gpu = readdlm("nvidia_0.3.2.txt", ',')
 
 # Plot execution time
 default()
@@ -28,8 +31,8 @@ gpu_time_031 = xcal_032_gpu[1,2]
 
 plot!([1,8], [gpu_time_032, gpu_time_032], color=3,marker=:none, label="XCALibre 0.3.3 - NVIDIA GeForce RTX 2060")
 plot!([1,8], [gpu_time_031, gpu_time_031], color=4, marker=:none, label="XCALibre 0.3.2 - NVIDIA GeForce RTX 2060")
-savefig("fig_execution_time_comparision.svg")
-savefig("fig_execution_time_comparision.png")
+savefig("figures/execution_time_comparision.svg")
+savefig("figures/execution_time_comparision.png")
 
 # Speed up compared to XCALibre v0.3.1
 ref = xcal_032[1,3]
@@ -46,14 +49,8 @@ gpu_time_031 = ref./xcal_032_gpu[1,2]
 
 plot!([1,8], [gpu_time_032, gpu_time_032], color=3,marker=:none, label="XCALibre 0.3.3 - RTX 2060")
 plot!([1,8], [gpu_time_031, gpu_time_031], color=4, marker=:none, label="XCALibre 0.3.2 - RTX 2060")
-savefig("fig_speedup_vs_v0.3.2.svg")
-savefig("fig_speedup_vs_v0.3.2.png")
-
-# Performance when using workgroup with sizes of 2^n
-# plot(; xaxis=:linear, yaxis=:linear, ylims=(200,800), framestyle=:box)
-# plot!(xcal_033[:,1], xcal_033[:,3], label="XCALibre - PGC Bicgstab (diagonal)")
-# plot!(xcal_033_pow2[:,1], xcal_033_pow2[:,3], label="XCALibre - PGC Bicgstab (diagonal)")
-
+savefig("figures/speedup_vs_v0.3.2.svg")
+savefig("figures/speedup_vs_v0.3.2.png")
 
 # Scaling plot
 plot(
@@ -65,7 +62,7 @@ plot!(of_GAMG[:,1], of_GAMG[1,2]./of_GAMG[:,2], label="OpenFOAM - GAMG Bicgstab 
 plot!(xcal_033[:,1], xcal_033[1,3]./xcal_033[:,3], label="XCALibre 0.3.3")
 plot!(xcal_032[:,1], xcal_032[1,3]./xcal_032[:,3], label="XCALibre 0.3.2")
 plot!(1:8, 1:8, label="Ideal scaling", color=:black)
-# plot!(xcal_033_pow2[:,1], xcal_033_pow2[1,3]./xcal_033_pow2[:,3], label="XCALibre - PGC Bicgstab (diagonal)")
-savefig("fig_parallel_scaling.svg")
-savefig("fig_parallel_scaling.png")
+
+savefig("figures/parallel_scaling.svg")
+savefig("figures/parallel_scaling.png")
 
