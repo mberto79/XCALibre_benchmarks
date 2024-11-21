@@ -2,8 +2,6 @@ using XCALibre
 using CUDA
 using Downloads
 
-
-
 mesh_file = "bfs_tet_5mm.unv"
 
 isfile(mesh_file) ? nothing : Downloads.download(

@@ -1,20 +1,21 @@
 using XCALibre
-# using LinearAlgebra
+using Downloads
 using ThreadPinning
-# using ThreadedSparseCSR
-# ThreadedSparseCSR.multithread_matmul(BaseThreads())
-
-nthreads = Threads.nthreads()
-
-pinthreads(:cores)
-# BLAS.set_num_threads(1)
-# multithread_matmul(BaseThreads())
 
 mesh_file = "bfs_tet_5mm.unv"
+
+isfile(mesh_file) ? nothing : Downloads.download(
+    "http://www.aerofluids.org/XCALibre/grids/3D_BFS/bfs_tet_5mm.unv", mesh_file
+    )
+
 mesh = UNV3D_mesh(mesh_file, scale=0.001)
 
+nthreads = Threads.nthreads()
+pinthreads(:cores)
+
+
+
 ncells = mesh.cells |> length
-# workgroup = 2^floor(Int, log2(cld(ncells,nthreads)))
 workgroup = cld(ncells, nthreads)
 workgroup = iseven(workgroup) ? workgroup : workgroup + 1 
 
