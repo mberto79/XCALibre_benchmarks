@@ -1,0 +1,85 @@
+#!/bin/bash
+
+# Author: Humberto Medina
+# Date: 2024-10-09
+# Purpose: Run a sweep of OpenFOAM cases for benchmarking against XCALibre.jl
+
+# Start by cleaning 
+rm -rf 0.* [1-9]*
+rm -rf processor* log.*
+
+# p -> GAMG
+# U -> PBiCGStab with DILU
+foamDictionary system/fvSolution -entry solvers/p/solver -set GAMG
+foamDictionary system/fvSolution -entry solvers/p/preconditioner -set none
+foamDictionary system/fvSolution -entry solvers/U/solver -set PBiCGStab
+foamDictionary system/fvSolution -entry solvers/U/preconditioner -set DILU
+foamRun > log.GAMG_none_PBiCGStab_DILU
+rm -rf 0.* [1-9]*
+
+# p -> GAMG
+# U -> PBiCGStab with diagonal
+foamDictionary system/fvSolution -entry solvers/p/solver -set GAMG
+foamDictionary system/fvSolution -entry solvers/p/preconditioner -set none
+foamDictionary system/fvSolution -entry solvers/U/solver -set PBiCGStab
+foamDictionary system/fvSolution -entry solvers/U/preconditioner -set diagonal
+foamRun > log.GAMG_none_PBiCGStab_diagonal
+rm -rf 0.* [1-9]*
+
+# p -> PCG with diagonal
+# U -> PBiCGStab with diagonal
+foamDictionary system/fvSolution -entry solvers/p/solver -set PCG
+foamDictionary system/fvSolution -entry solvers/p/preconditioner -set diagonal
+foamDictionary system/fvSolution -entry solvers/U/solver -set PBiCGStab
+foamDictionary system/fvSolution -entry solvers/U/preconditioner -set diagonal
+foamRun > log.PCG_diagonal_PBiCGStab_diagonal
+rm -rf 0.* [1-9]*
+
+
+# p -> PCG with DIC
+# U -> PBiCGStab with DILU
+foamDictionary system/fvSolution -entry solvers/p/solver -set PCG
+foamDictionary system/fvSolution -entry solvers/p/preconditioner -set DIC
+foamDictionary system/fvSolution -entry solvers/U/solver -set PBiCGStab
+foamDictionary system/fvSolution -entry solvers/U/preconditioner -set DILU
+foamRun > log.PCG_DIC_PBiCGStab_DILU
+rm -rf 0.* [1-9]*
+
+#### PARALLEL RUNS ####
+
+# Option 1: Comparable settings
+
+# p -> PCG with diagonal
+# U -> PBiCGStab with diagonal
+for nprocs in {2..8..2}
+  do
+    foamDictionary system/fvSolution -entry solvers/p/solver -set PCG
+    foamDictionary system/fvSolution -entry solvers/p/preconditioner -set diagonal
+    foamDictionary system/fvSolution -entry solvers/U/solver -set PBiCGStab
+    foamDictionary system/fvSolution -entry solvers/U/preconditioner -set diagonal
+    foamDictionary system/decomposeParDict -entry numberOfSubdomains -set $nprocs
+    decomposePar
+    mpirun -np $nprocs foamRun -parallel > log.PCG_diagonal_PBiCGStab_diagonal_$nprocs 
+    rm -rf processor*
+done
+
+# Option 2: Best settings
+
+# p -> GAMG
+# U -> PBiCGStab with DILU
+for nprocs in {2..8..2}
+  do
+    rm -rf processor*
+    foamDictionary system/fvSolution -entry solvers/p/solver -set GAMG
+    foamDictionary system/fvSolution -entry solvers/p/preconditioner -set none
+    foamDictionary system/fvSolution -entry solvers/U/solver -set PBiCGStab
+    foamDictionary system/fvSolution -entry solvers/U/preconditioner -set DILU
+    foamDictionary system/decomposeParDict -entry numberOfSubdomains -set $nprocs
+    decomposePar
+    mpirun -np $nprocs foamRun -parallel > log.GAMG_none_PBiCGStab_DILU_$nprocs 
+done
+
+
+
+
+#------------------------------------------------------------------------------
