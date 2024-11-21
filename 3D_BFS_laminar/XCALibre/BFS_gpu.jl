@@ -1,7 +1,15 @@
 using XCALibre
 using CUDA
+using Downloads
 
-mesh_file = "bfs_unv_tet_5mm.unv"
+
+
+mesh_file = "bfs_tet_5mm.unv"
+
+isfile(mesh_file) ? nothing : Downloads.download(
+    "http://www.aerofluids.org/XCALibre/grids/3D_BFS/bfs_tet_5mm.unv", mesh_file
+    )
+
 mesh = UNV3D_mesh(mesh_file, scale=0.001)
 
 workgroup = 32
@@ -91,7 +99,7 @@ initialise!(model.momentum.p, 0.0)
 exe_time = @elapsed residuals = run!(model, config)
 
 # Write execution time to file 
-
-open("nvidia_benchmarks.txt","a") do io
+filename = "nvidia_"*ARGS[1]*".txt"
+open(filename,"a") do io
     println(io,"$workgroup,$exe_time")
 end 

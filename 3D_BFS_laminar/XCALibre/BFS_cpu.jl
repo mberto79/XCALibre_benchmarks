@@ -10,7 +10,7 @@ pinthreads(:cores)
 # BLAS.set_num_threads(1)
 # multithread_matmul(BaseThreads())
 
-mesh_file = "bfs_unv_tet_5mm.unv"
+mesh_file = "bfs_tet_5mm.unv"
 mesh = UNV3D_mesh(mesh_file, scale=0.001)
 
 ncells = mesh.cells |> length
