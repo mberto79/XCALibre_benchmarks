@@ -8,10 +8,11 @@
 rm -rf 0.* [1-9]*
 rm -rf processor* log.*
 
-# Download mesh file if not available
+# Download mesh file if not available and set up boundary file
 wget -N http://www.aerofluids.org/XCALibre/grids/3D_BFS/bfs_tet_5mm.unv
 ideasUnvToFoam bfs_tet_5mm.unv
 transformPoints "scale=(0.001 0.001 0.001)"
+foamDictionary constant/polyMesh/boundary -entry entry0/wall/type -set wall
 
 # p -> GAMG
 # U -> PBiCGStab with DILU
