@@ -4,7 +4,7 @@ This repository will host benchmarks for the Julia package `XCALibre.jl` and it 
 
 ## Usage and notes
 
-The various benchmarks will be organised in folders, it will be assumed/required for any scripts included to be launched within each individual folder (all paths in the scripts will assume this). The following observations should be considered:
+The various benchmarks will be organised in folders, it will be assumed/required for any scripts included to be launched within each individual folder (all paths in the scripts will assume this). The following additional observations should be considered:
 
 * Benchmark cases for `XCALibre.jl` will include a Project.toml file. Before running benchmarks, the environment should be activated (in package mode `activate .`)
 * For benchmarks involving OpenFOAM, the user should ensure that OpenFOAM is installed in their system. For information on installing OpenFOAM visit their [website](https://openfoam.org/)
