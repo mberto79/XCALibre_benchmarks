@@ -6,7 +6,8 @@ This repository will host benchmarks for the Julia package `XCALibre.jl` and it 
 
 The various benchmarks will be organised in folders, it will be assumed/required for any scripts included to be launched within each individual folder (all paths in the scripts will assume this). The following additional observations should be considered:
 
-* Benchmark cases for `XCALibre.jl` will include a Project.toml file. Before running benchmarks, the environment should be activated (in package mode `activate .`)
+* Each benchmark case for `XCALibre.jl` hosted here will include a Project.toml file. Before running benchmarks, the environment should be activated (in package mode `activate .`)
+* To keep this repository's size small, large files (e.g. grids) will be hosted in [aerofluids.org/XCALibre](http://www.aerofluids.org/XCALibre/). Whenever feasible, these files will be downloaded automatically during execution of a given benchmark
 * For benchmarks involving OpenFOAM, the user should ensure that OpenFOAM is installed in their system. For information on installing OpenFOAM visit their [website](https://openfoam.org/)
 * For GPU tests, only NVIDIA gpus are currently supporter/set up
 * Only bash scripts are provided, which should run on most linux distributions. Windows/Mac specific scripts are not currently provided/supported
