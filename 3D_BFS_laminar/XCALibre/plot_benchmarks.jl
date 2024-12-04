@@ -22,15 +22,15 @@ plot(
     xlabel="# processors", ylabel="Execution time (s)", 
     ylims=(50,2000), 
     )
-plot!(of_similar[:,1], of_similar[:,2], label="OpenFOAM - PGC Bicgstab (diagonal)")
-plot!(of_GAMG[:,1], of_GAMG[:,2], label="OpenFOAM - GAMG Bicgstab (DILU)")
-plot!(xcal_033[:,1], xcal_033[:,3], label="XCALibre 0.3.3 - PGC Bicgstab (diagonal)")
-plot!(xcal_032[:,1], xcal_032[:,3], label="XCALibre 0.3.2 - PGC Bicgstab (diagonal)")
+plot!(of_similar[:,1], of_similar[:,2], label="OF11 Similar")
+plot!(of_GAMG[:,1], of_GAMG[:,2], label="OF11 Best")
+plot!(xcal_033[:,1], xcal_033[:,3], label="v0.3.3")
+plot!(xcal_032[:,1], xcal_032[:,3], label="v0.3.2")
 gpu_time_032 = xcal_033_gpu[1,2]
 gpu_time_031 = xcal_032_gpu[1,2]
 
-plot!([1,8], [gpu_time_032, gpu_time_032], color=3,marker=:none, label="XCALibre 0.3.3 - NVIDIA GeForce RTX 2060")
-plot!([1,8], [gpu_time_031, gpu_time_031], color=4, marker=:none, label="XCALibre 0.3.2 - NVIDIA GeForce RTX 2060")
+plot!([1,8], [gpu_time_032, gpu_time_032], color=3,marker=:none, label="v0.3.3 GPU")
+plot!([1,8], [gpu_time_031, gpu_time_031], color=4, marker=:none, label="v0.3.2 GPU")
 savefig("figures/execution_time_comparision.svg")
 savefig("figures/execution_time_comparision.png")
 
@@ -40,15 +40,15 @@ plot(
     xlabel="# processors", ylabel="Speed up compared to v0.3.2 (1 thread)", # yaxis=:log10
     ylims=(0,19), yticks=(0:1:19),legend=:outertopright
     )
-plot!(of_similar[:,1], ref./of_similar[:,2], label="OpenFOAM - Comparable")
-plot!(of_GAMG[:,1], ref./of_GAMG[:,2], label="OpenFOAM - GAMG")
-plot!(xcal_033[:,1], ref./xcal_033[:,3], label="XCALibre 0.3.3")
-plot!(xcal_032[:,1], ref./xcal_032[:,3], label="XCALibre 0.3.2")
+plot!(of_similar[:,1], ref./of_similar[:,2], label="OF11 Similar")
+plot!(of_GAMG[:,1], ref./of_GAMG[:,2], label="OF11 Best")
+plot!(xcal_033[:,1], ref./xcal_033[:,3], label="v0.3.3")
+plot!(xcal_032[:,1], ref./xcal_032[:,3], label="v0.3.2")
 gpu_time_032 = ref./xcal_033_gpu[1,2]
 gpu_time_031 = ref./xcal_032_gpu[1,2]
 
-plot!([1,8], [gpu_time_032, gpu_time_032], color=3,marker=:none, label="XCALibre 0.3.3 - RTX 2060")
-plot!([1,8], [gpu_time_031, gpu_time_031], color=4, marker=:none, label="XCALibre 0.3.2 - RTX 2060")
+plot!([1,8], [gpu_time_032, gpu_time_032], color=3,marker=:none, label="v0.3.3 GPU")
+plot!([1,8], [gpu_time_031, gpu_time_031], color=4, marker=:none, label="v0.3.2 GPU")
 savefig("figures/speedup_vs_v0.3.2.svg")
 savefig("figures/speedup_vs_v0.3.2.png")
 
@@ -57,10 +57,10 @@ plot(
     xlabel = "# processors", ylabel="Parallel scaling",
     ylims=(1,6)
     )
-plot!(of_similar[:,1], of_similar[1,2]./of_similar[:,2], label="OpenFOAM - PGC Bicgstab (diagonal)")
-plot!(of_GAMG[:,1], of_GAMG[1,2]./of_GAMG[:,2], label="OpenFOAM - GAMG Bicgstab (DILU)")
-plot!(xcal_033[:,1], xcal_033[1,3]./xcal_033[:,3], label="XCALibre 0.3.3")
-plot!(xcal_032[:,1], xcal_032[1,3]./xcal_032[:,3], label="XCALibre 0.3.2")
+plot!(of_similar[:,1], of_similar[1,2]./of_similar[:,2], label="OF11 Similar")
+plot!(of_GAMG[:,1], of_GAMG[1,2]./of_GAMG[:,2], label="OF11 Best")
+plot!(xcal_033[:,1], xcal_033[1,3]./xcal_033[:,3], label="v0.3.3")
+plot!(xcal_032[:,1], xcal_032[1,3]./xcal_032[:,3], label="v0.3.2")
 plot!(1:8, 1:8, label="Ideal scaling", color=:black)
 
 savefig("figures/parallel_scaling.svg")
