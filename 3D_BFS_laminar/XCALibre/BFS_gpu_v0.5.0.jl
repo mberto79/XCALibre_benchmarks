@@ -32,34 +32,36 @@ model = Physics(
     domain = mesh_dev
     )
 
-@assign! model momentum U ( 
-    Dirichlet(:inlet, velocity),
-    Neumann(:outlet, 0.0),
-    Wall(:wall, noSlip),
-    Neumann(:sides, 0.0),
-    Neumann(:top, 0.0)
-)
-
-@assign! model momentum p (
-    Neumann(:inlet, 0.0),
-    Dirichlet(:outlet, 0.0),
-    Neumann(:wall, 0.0),
-    Neumann(:sides, 0.0),
-    Neumann(:top, 0.0)
+BCs = assign(
+    region = mesh_dev,
+    (
+        U = [
+            Dirichlet(:inlet, velocity),
+            Zerogradient(:outlet),
+            Wall(:wall, noSlip),
+            Extrapolated(:sides),
+            Extrapolated(:top)
+        ],
+        p = [
+            Zerogradient(:inlet),
+            Dirichlet(:outlet, 0.0),
+            Wall(:wall),
+            Extrapolated(:sides),
+            Extrapolated(:top)
+        ]
+    )
 )
 
 solvers = (
-    U = set_solver(
-        model.momentum.U;
-        solver      = BicgstabSolver, # BicgstabSolver, GmresSolver
+    U = SolverSetup(
+        solver      = Bicgstab(), # BicgstabSolver, GmresSolver
         preconditioner = Jacobi(),
         convergence = 1e-7,
         relax       = 0.8,
         rtol = 0.1
     ),
-    p = set_solver(
-        model.momentum.p;
-        solver      = CgSolver, # BicgstabSolver, GmresSolver, CgSolver
+    p = SolverSetup(
+        solver      = Cg(), # BicgstabSolver, GmresSolver
         preconditioner = Jacobi(), #NormDiagonal(),
         convergence = 1e-7,
         relax       = 0.2,
@@ -69,16 +71,17 @@ solvers = (
 )
 
 schemes = (
-    U = set_schemes(time=SteadyState, divergence=Upwind, gradient=Midpoint),
-    p = set_schemes(time=SteadyState, gradient=Midpoint)
+    U = Schemes(time=SteadyState, divergence=Upwind, gradient=Gauss),
+    p = Schemes(time=SteadyState, gradient=Gauss)
 )
 
-hardware = set_hardware(backend=backend, workgroup=workgroup)
+hardware = Hardware(backend=backend, workgroup=workgroup)
 
 # Run first to pre-compile
 
-runtime = set_runtime(iterations=1, write_interval=1, time_step=1)
-config = Configuration(solvers=solvers, schemes=schemes, runtime=runtime, hardware=hardware)
+runtime = Runtime(iterations=1, write_interval=1, time_step=1)
+config = Configuration(
+    solvers=solvers, schemes=schemes, runtime=runtime, hardware=hardware, boundaries=BCs)
 
 GC.gc(true)
 
@@ -89,8 +92,9 @@ residuals = run!(model, config)
 
 # Now get timing information
 
-runtime = set_runtime(iterations=500, write_interval=500, time_step=1)
-config = Configuration(solvers=solvers, schemes=schemes, runtime=runtime, hardware=hardware)
+runtime = Runtime(iterations=500, write_interval=500, time_step=1)
+config = Configuration(
+    solvers=solvers, schemes=schemes, runtime=runtime, hardware=hardware, boundaries=BCs)
 
 GC.gc(true)
 
