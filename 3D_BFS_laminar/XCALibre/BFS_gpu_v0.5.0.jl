@@ -33,14 +33,14 @@ model = Physics(
     )
 
 BCs = assign(
-    region = mesh_dev,
+    region=mesh_dev,
     (
         U = [
             Dirichlet(:inlet, velocity),
             Zerogradient(:outlet),
             Wall(:wall, noSlip),
-            Extrapolated(:sides),
-            Extrapolated(:top)
+            Zerogradient(:sides), # faster!
+            Zerogradient(:top)
         ],
         p = [
             Zerogradient(:inlet),
