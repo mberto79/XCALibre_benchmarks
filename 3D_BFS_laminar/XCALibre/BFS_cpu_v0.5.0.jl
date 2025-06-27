@@ -20,7 +20,7 @@ ncells = mesh.cells |> length
 workgroup = cld(ncells, nthreads)
 workgroup = iseven(workgroup) ? workgroup : workgroup + 1 
 
-backend = CPU()
+backend = CPU(static=true)
 if pkgversion(XCALibre) !== v"0.3.2"
     activate_multithread(backend)
 end
