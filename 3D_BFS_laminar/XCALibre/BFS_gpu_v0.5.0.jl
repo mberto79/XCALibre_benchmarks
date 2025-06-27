@@ -39,7 +39,7 @@ BCs = assign(
             Dirichlet(:inlet, velocity),
             Zerogradient(:outlet),
             Wall(:wall, noSlip),
-            Zerogradient(:sides), # faster!
+            Zerogradient(:sides),
             Zerogradient(:top)
         ],
         p = [
