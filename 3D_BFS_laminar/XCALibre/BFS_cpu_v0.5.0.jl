@@ -17,8 +17,8 @@ nthreads = Threads.nthreads()
 pinthreads(:cores)
 
 ncells = mesh.cells |> length
-workgroup = cld(ncells, nthreads)
-workgroup = iseven(workgroup) ? workgroup : workgroup + 1 
+workgroup = AutoTune()
+workgroup_out = "auto"
 
 backend = CPU(static=true)
 if pkgversion(XCALibre) !== v"0.3.2"
@@ -115,5 +115,5 @@ exe_time = @elapsed residuals = run!(model, config)
 # Write execution time to file 
 filename = "multithread_"*ARGS[1]*".txt"
 open(filename,"a") do io
-    println(io,"$nthreads,$workgroup,$exe_time")
+    println(io,"$nthreads,$workgroup_out,$exe_time")
 end
