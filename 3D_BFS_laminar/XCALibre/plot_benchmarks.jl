@@ -23,7 +23,8 @@ default(
 plot(
     xlabel="# processors", ylabel="Execution time (s)", 
     ylims=(50,2000), 
-    yaxis = :log10
+    yaxis = :log10,
+    legend=:outertopright,
     )
 plot!(of_similar[:,1], of_similar[:,2], label="OF11 Similar")
 plot!(of_GAMG[:,1], of_GAMG[:,2], label="OF11 Best")
@@ -41,10 +42,10 @@ savefig("figures/execution_time_comparision.svg")
 savefig("figures/execution_time_comparision.png")
 
 # Speed up compared to XCALibre v0.3.1
-# ref = xcal_032[1,3]
-ref = of_similar[1,2]
+ref = xcal_032[1,3]
+# ref = of_similar[1,2]
 # ref = of_GAMG[1,2]
-upper_limit = 30
+upper_limit = 20
 plot(
     xlabel="# processors", ylabel="Speed up compared to v0.3.2 (1 thread)", # yaxis=:log10
     ylims=(0,upper_limit), 
