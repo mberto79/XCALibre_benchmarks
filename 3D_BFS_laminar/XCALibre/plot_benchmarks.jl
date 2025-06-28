@@ -20,9 +20,11 @@ default(
     linewidth=2, marker=:circle, markersize=3, framestyle=:box, 
     foreground_color_legend = nothing, background_color_legend=nothing
     )
+    r = round.(10.0.^(1.70:0.15:3.2), digits=2)
 plot(
     xlabel="# processors", ylabel="Execution time (s)", 
     ylims=(50,2000), 
+    yticks = (r, r),
     yaxis = :log10,
     legend=:outertopright,
     )
@@ -45,7 +47,7 @@ savefig("figures/execution_time_comparision.png")
 ref = xcal_032[1,3]
 # ref = of_similar[1,2]
 # ref = of_GAMG[1,2]
-upper_limit = 20
+upper_limit = 22
 plot(
     xlabel="# processors", ylabel="Speed up compared to v0.3.2 (1 thread)", # yaxis=:log10
     ylims=(0,upper_limit), 
@@ -70,9 +72,15 @@ savefig("figures/speedup_vs_v0.3.2.png")
 
 # Scaling plot
 plot(
-    xlabel = "# processors", ylabel="Parallel scaling",
-    ylims=(1,6)
-    )
+    xlabel = "# processors", 
+    ylabel="Parallel scaling",
+    yaxis = :log10,
+    ylims= (1,8),
+    xlims= (1,10),
+    yticks = (1:8, string.(1:8)),
+    xticks = (1:10, string.(1:10)),
+    xaxis = :log10, 
+   )
 plot!(of_similar[:,1], of_similar[1,2]./of_similar[:,2], label="OF11 Similar")
 plot!(of_GAMG[:,1], of_GAMG[1,2]./of_GAMG[:,2], label="OF11 Best")
 plot!(xcal_032[:,1], xcal_032[1,3]./xcal_032[:,3], label="v0.3.2")
