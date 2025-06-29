@@ -20,7 +20,17 @@ ncells = mesh.cells |> length
 workgroup = AutoTune()
 workgroup_out = "auto"
 
-backend = CPU(static=true)
+static = true
+
+fileNamePrefix = nothing
+if static
+    fileNamePrefix = "multithread_static_"
+else
+    fileNamePrefix = "multithread_dynamic_"
+end
+
+backend = CPU(static=static)
+
 if pkgversion(XCALibre) !== v"0.3.2"
     activate_multithread(backend)
 end
@@ -113,7 +123,7 @@ initialise!(model.momentum.p, 0.0)
 exe_time = @elapsed residuals = run!(model, config)
 
 # Write execution time to file 
-filename = "multithread_"*ARGS[1]*".txt"
+filename = fileNamePrefix*ARGS[1]*".txt"
 open(filename,"a") do io
     println(io,"$nthreads,$workgroup_out,$exe_time")
 end
