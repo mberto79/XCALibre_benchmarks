@@ -3,6 +3,7 @@ Pkg.activate(".")
 
 using XCALibre
 using Downloads
+using JLD2
 using ThreadPinning
 
 mesh_file = "bfs_tet_5mm.unv"
@@ -11,7 +12,13 @@ isfile(mesh_file) ? nothing : Downloads.download(
     "http://www.aerofluids.org/XCALibre/grids/3D_BFS/bfs_tet_5mm.unv", mesh_file
     )
 
-mesh = UNV3D_mesh(mesh_file, scale=0.001)
+mesh = nothing 
+if isfile("mesh.jld2")  
+    mesh = load_object("mesh.jld2")
+else
+    mesh = UNV3D_mesh(mesh_file, scale=0.001)
+    save_object("mesh.jld2", mesh)
+end
 
 nthreads = Threads.nthreads()
 pinthreads(:cores)
@@ -21,6 +28,7 @@ workgroup = AutoTune()
 workgroup_out = "auto"
 
 static = true
+# static = false
 
 fileNamePrefix = nothing
 if static
